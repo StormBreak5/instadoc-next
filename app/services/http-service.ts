@@ -1,4 +1,8 @@
 import axios from "axios";
+import { parseCookies } from "nookies";
+import { getAPIClient } from "./axios";
+
+export const api = getAPIClient();
 
 export const serverURL = axios.create({
   baseURL: "http://localhost:8081",

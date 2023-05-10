@@ -62,47 +62,69 @@ export default function UserForm() {
       </CardHeader>
       <form onSubmit={handleSubmit(registerUser)}>
         <CardBody className="flex flex-col gap-4">
-          <Input
-            label="Nome"
-            size="lg"
-            {...register("name")}
-            className="rounded-full"
-          />
-          {errors.name && (
-            <span className="text-red-500">{errors.name.message}</span>
-          )}
-          <Input label="E-mail" size="lg" {...register("email")} />
-          {errors.email && (
-            <span className="text-red-500">{errors.email.message}</span>
-          )}
-          <Input
-            label="Confirmar e-mail"
-            size="lg"
-            {...register("confirmEmail")}
-          />
-          {errors.confirmEmail && (
-            <span className="text-red-500">{errors.confirmEmail.message}</span>
-          )}
-          <Input
-            label="Senha"
-            type="password"
-            size="lg"
-            {...register("password")}
-          />
-          {errors.password && (
-            <span className="text-red-500">{errors.password.message}</span>
-          )}
-          <Input
-            label="Confirmar senha"
-            type="password"
-            size="lg"
-            {...register("confirmPassword")}
-          />
-          {errors.confirmPassword && (
-            <span className="text-red-500">
-              {errors.confirmPassword.message}
-            </span>
-          )}
+          <div>
+            <Input
+              label="Nome"
+              size="lg"
+              error={errors.name ? true : false}
+              {...register("name")}
+            />
+            {errors.name && (
+              <span className="text-red-500">{errors.name.message}</span>
+            )}
+          </div>
+          <div>
+            <Input
+              label="E-mail"
+              size="lg"
+              error={errors.email ? true : false}
+              {...register("email")}
+            />
+            {errors.email && (
+              <span className="text-red-500">{errors.email.message}</span>
+            )}
+          </div>
+          <div>
+            <Input
+              label="Confirmar e-mail"
+              size="lg"
+              error={errors.confirmEmail ? true : false}
+              {...register("confirmEmail")}
+            />
+            {errors.confirmEmail && (
+              <span className="text-red-500">
+                {errors.confirmEmail.message}
+              </span>
+            )}
+          </div>
+          <div>
+            <Input
+              label="Senha"
+              type="password"
+              size="lg"
+              error={errors.password ? true : false}
+              {...register("password")}
+            />
+            {errors.password && (
+              <span className="text-red-500 m-0">
+                {errors.password.message}
+              </span>
+            )}
+          </div>
+          <div>
+            <Input
+              label="Confirmar senha"
+              type="password"
+              size="lg"
+              error={errors.confirmPassword ? true : false}
+              {...register("confirmPassword")}
+            />
+            {errors.confirmPassword && (
+              <span className="text-red-500 m-0">
+                {errors.confirmPassword.message}
+              </span>
+            )}
+          </div>
         </CardBody>
         <CardFooter className="pt-0">
           <Button type="submit" variant="gradient" fullWidth>
