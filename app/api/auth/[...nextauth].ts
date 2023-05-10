@@ -1,8 +1,8 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import axios from "axios";
-import { serverURL } from "@/app/services/http-service";
+
+import axios from "../../lib/axios";
 
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
