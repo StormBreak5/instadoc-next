@@ -15,7 +15,9 @@ const useAxiosAuth = () => {
       }
 
       return config;
-    });
+    },
+      (error) => Promise.reject(error)
+    );
 
     const resIntercept = axiosAuth.interceptors.response.use(
       (response) => response,
@@ -23,12 +25,18 @@ const useAxiosAuth = () => {
         const prevRequest = error.config;
         if (error.response.status === 401 && !prevRequest.sent) {
           prevRequest.sent = true;
+          await refreshToken()
+          prevRequest.headers["Authorization"] = `Bearer ${session?.user.accessToken}`;
+          return axiosAuth(prevRequest)
         }
+
+        return Promise.reject(error)
       }
     );
 
     return () => {
       axiosAuth.interceptors.request.eject(reqIntercept);
+      axiosAuth.interceptors.response.eject(resIntercept)
     };
   }, [session]);
 
