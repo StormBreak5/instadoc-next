@@ -1,36 +1,41 @@
-"use client";
-import { useEffect, useContext } from "react";
-import { GetServerSideProps } from "next";
-import { parseCookies } from "nookies";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
 
-import { AuthContext } from "@/app/contexts/AuthContext";
-import { serverURL } from "@/app/services/http-service";
-import { getAPIClient } from "@/app/services/axios";
-
-export default function Profile() {
-  const user = useContext(AuthContext);
-
-  useEffect(() => {
-    serverURL.get("/users");
-  }, []);
-
-  return;
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const apiClient = getAPIClient(ctx);
-  const { ["instadoc-token"]: token } = parseCookies(ctx);
-
-  if (!token) {
-    return {
-      redirect: "/Login",
-      permanent: false,
-    };
-  }
-
-  await apiClient.get("/users");
-
-  return {
-    props: {},
-  };
+type User = {
+  id: number;
+  name: string;
+  email: string;
 };
+
+export default async function Profile() {
+  const users: User[] = await fetch(
+    "https://jsonplaceholder.typicode.com/users"
+  ).then((res) => res.json());
+
+  return (
+    <main style={{ maxWidth: 1200, marginInline: "auto", padding: 20 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr 1fr",
+          gap: 20,
+        }}
+      >
+        {users.map((user) => (
+          <div
+            key={user.id}
+            style={{ border: "1px solid #ccc", textAlign: "center" }}
+          >
+            <img
+              src={`https://robohash.org/${user.id}?set=set2&size=180x180`}
+              alt={user.name}
+              style={{ height: 180, width: 180 }}
+            />
+            <h3>{user.name}</h3>
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}

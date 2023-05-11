@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Providers from "./contexts/AuthContext";
+import { NextAuthProvider } from "./providers";
 
 export const metadata = {
   title: "Instadoc",
@@ -18,14 +19,14 @@ export default function RootLayout({
 }) {
   return (
     <ThemeProvider>
-      <Providers>
-        <html lang="en">
-          <body className={`${inter.className}`}>
+      <html lang="en">
+        <body className={`${inter.className}`}>
+          <NextAuthProvider>
             <Header />
             {children}
-          </body>
-        </html>
-      </Providers>
+          </NextAuthProvider>
+        </body>
+      </html>
     </ThemeProvider>
   );
 }

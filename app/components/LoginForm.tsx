@@ -10,10 +10,8 @@ import {
   Input,
   Typography,
 } from "@material-tailwind/react";
-import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { AuthContext } from "../contexts/AuthContext";
 
 const loginFormSchema = z.object({
   email: z.string().nonempty("Insira algum e-mail"),
@@ -30,12 +28,6 @@ export default function LoginForm() {
   } = useForm<loginFormData>({
     resolver: zodResolver(loginFormSchema),
   });
-  const { signIn } = useContext(AuthContext);
-
-  async function handleSignIn(data: any) {
-    console.log(data);
-    await signIn(data);
-  }
 
   return (
     <Card className="w-1/3">
@@ -48,7 +40,7 @@ export default function LoginForm() {
           Login
         </Typography>
       </CardHeader>
-      <form onSubmit={handleSubmit(handleSignIn)}>
+      <form>
         <CardBody className="flex flex-col gap-4">
           <div>
             <Input
