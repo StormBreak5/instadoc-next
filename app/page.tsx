@@ -1,16 +1,33 @@
+"use client";
+import { useEffect, useState } from "react";
 import {
   LoginButton,
   LogoutButton,
   ProfileButton,
   RegisterButton,
 } from "./components/button.component";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/route";
-import { User } from "./components/user.component";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
-  console.log(session);
+  const [message, setMessage] = useState("");
+  const [auth, setAuth] = useState(false);
+
+  useEffect(() => {
+    async () => {
+      try {
+        const response = await fetch("http://localhost:8000/api/user", {
+          credentials: "include",
+        });
+
+        const content = await response.json();
+
+        setMessage(`Hi, ${content.name}`);
+        setAuth(true);
+      } catch (error) {
+        setMessage("You are not logged in");
+        setAuth(false);
+      }
+    };
+  }, []);
 
   return (
     <main
@@ -26,11 +43,7 @@ export default async function Home() {
         <RegisterButton />
         <LogoutButton />
         <ProfileButton />
-
-        <h1>Server Session</h1>
-        <pre>{JSON.stringify(session)}</pre>
-
-        <User />
+        {message}
       </div>
     </main>
   );

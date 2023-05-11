@@ -13,6 +13,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import userService from "../services/users/user-service";
+import { SyntheticEvent, useState } from "react";
+import { headers } from "next/dist/client/components/headers";
+import { useRouter } from "next/navigation";
 
 const createUserFormSchema = z
   .object({
@@ -37,17 +40,44 @@ const createUserFormSchema = z
 type CreateUserFormData = z.infer<typeof createUserFormSchema>;
 
 export default function UserForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<CreateUserFormData>({
-    resolver: zodResolver(createUserFormSchema),
-  });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const router = useRouter();
 
-  function registerUser(data: any) {
-    userService.save(data);
-  }
+  const submit = async (e: SyntheticEvent) => {
+    e.preventDefault();
+
+    await fetch("http://localhost:8000/api/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+      }),
+    });
+
+    console.log(name, email, password);
+
+    await router.push("/");
+  };
+
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<CreateUserFormData>({
+  //   resolver: zodResolver(createUserFormSchema),
+  // });
+
+  // function registerUser(data: any) {
+  //   userService.save(data);
+  // }
 
   return (
     <Card className="w-1/3 ">
@@ -60,70 +90,44 @@ export default function UserForm() {
           Cadastre-se
         </Typography>
       </CardHeader>
-      <form onSubmit={handleSubmit(registerUser)}>
+      <form onSubmit={submit}>
         <CardBody className="flex flex-col gap-4">
           <div>
             <Input
               label="Nome"
               size="lg"
-              error={errors.name ? true : false}
-              {...register("name")}
+              onChange={(e) => setName(e.target.value)}
             />
-            {errors.name && (
-              <span className="text-red-500">{errors.name.message}</span>
-            )}
           </div>
           <div>
             <Input
               label="E-mail"
               size="lg"
-              error={errors.email ? true : false}
-              {...register("email")}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && (
-              <span className="text-red-500">{errors.email.message}</span>
-            )}
           </div>
           <div>
             <Input
               label="Confirmar e-mail"
               size="lg"
-              error={errors.confirmEmail ? true : false}
-              {...register("confirmEmail")}
+              onChange={(e) => setConfirmEmail(e.target.value)}
             />
-            {errors.confirmEmail && (
-              <span className="text-red-500">
-                {errors.confirmEmail.message}
-              </span>
-            )}
           </div>
           <div>
             <Input
               label="Senha"
               type="password"
               size="lg"
-              error={errors.password ? true : false}
-              {...register("password")}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            {errors.password && (
-              <span className="text-red-500 m-0">
-                {errors.password.message}
-              </span>
-            )}
           </div>
           <div>
             <Input
               label="Confirmar senha"
               type="password"
               size="lg"
-              error={errors.confirmPassword ? true : false}
-              {...register("confirmPassword")}
+              onChange={(e) => setConfirmPassword(e.target.value)}
             />
-            {errors.confirmPassword && (
-              <span className="text-red-500 m-0">
-                {errors.confirmPassword.message}
-              </span>
-            )}
           </div>
         </CardBody>
         <CardFooter className="pt-0">

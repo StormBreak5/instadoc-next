@@ -10,6 +10,8 @@ import {
   Input,
   Typography,
 } from "@material-tailwind/react";
+import { useRouter } from "next/navigation";
+import { SyntheticEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -21,13 +23,35 @@ const loginFormSchema = z.object({
 type loginFormData = z.infer<typeof loginFormSchema>;
 
 export default function LoginForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<loginFormData>({
-    resolver: zodResolver(loginFormSchema),
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  const submit = async (e: SyntheticEvent) => {
+    e.preventDefault();
+
+    await fetch("http://localhost:8000/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    await router.push("/");
+  };
+
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<loginFormData>({
+  //   resolver: zodResolver(loginFormSchema),
+  // });
 
   return (
     <Card className="w-1/3">
@@ -40,30 +64,22 @@ export default function LoginForm() {
           Login
         </Typography>
       </CardHeader>
-      <form>
+      <form onSubmit={submit}>
         <CardBody className="flex flex-col gap-4">
           <div>
             <Input
               label="E-mail"
               size="lg"
-              error={errors.email ? true : false}
-              {...register("email")}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && (
-              <span className="text-red-500">{errors.email.message}</span>
-            )}
           </div>
           <div>
             <Input
               type="password"
               label="Senha"
               size="lg"
-              error={errors.password ? true : false}
-              {...register("password")}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            {errors.password && (
-              <span className="text-red-500">{errors.password.message}</span>
-            )}
           </div>
           <div className="-ml-2.5">
             <Checkbox label="Lembrar" />
